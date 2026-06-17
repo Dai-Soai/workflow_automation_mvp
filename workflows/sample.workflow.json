@@ -1,0 +1,27 @@
+{
+  "name": "sample-document-workflow",
+  "description": "Process a document folder through RADAR automation.",
+  "target": "data/input_docs",
+  "steps": [
+    {
+      "name": "detect_documents",
+      "type": "detect",
+      "enabled": true
+    },
+    {
+      "name": "run_document_pipeline",
+      "type": "pipeline",
+      "enabled": true
+    },
+    {
+      "name": "publish_to_knowledge_search",
+      "type": "publish",
+      "enabled": true
+    }
+  ],
+  "options": {
+    "export_json": true,
+    "export_markdown": true,
+    "publish": true
+  }
+}

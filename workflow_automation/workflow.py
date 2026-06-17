@@ -1,5 +1,21 @@
+import json
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
+
+
+@dataclass
+class WorkflowStep:
+    name: str
+    type: str
+    enabled: bool = True
+
+
+@dataclass
+class WorkflowOptions:
+    export_json: bool = False
+    export_markdown: bool = False
+    publish: bool = False
 
 
 @dataclass
@@ -7,6 +23,46 @@ class WorkflowSpec:
     name: str
     description: str
     target: str
+    steps: list[WorkflowStep]
+    options: WorkflowOptions
+
+
+def _load_json(path: Path) -> dict[str, Any]:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Invalid workflow JSON: {path}") from exc
+
+
+def _parse_steps(raw_steps: list[dict[str, Any]]) -> list[WorkflowStep]:
+    steps: list[WorkflowStep] = []
+
+    for raw_step in raw_steps:
+        if "name" not in raw_step:
+            raise ValueError("Workflow step missing required field: name")
+
+        if "type" not in raw_step:
+            raise ValueError("Workflow step missing required field: type")
+
+        steps.append(
+            WorkflowStep(
+                name=str(raw_step["name"]),
+                type=str(raw_step["type"]),
+                enabled=bool(raw_step.get("enabled", True)),
+            )
+        )
+
+    return steps
+
+
+def _parse_options(raw_options: dict[str, Any] | None) -> WorkflowOptions:
+    raw_options = raw_options or {}
+
+    return WorkflowOptions(
+        export_json=bool(raw_options.get("export_json", False)),
+        export_markdown=bool(raw_options.get("export_markdown", False)),
+        publish=bool(raw_options.get("publish", False)),
+    )
 
 
 def load_workflow_spec(workflow_path: str) -> WorkflowSpec:
@@ -15,16 +71,20 @@ def load_workflow_spec(workflow_path: str) -> WorkflowSpec:
     if not path.exists():
         raise FileNotFoundError(f"Workflow file not found: {path}")
 
-    text = path.read_text(encoding="utf-8")
+    payload = _load_json(path)
 
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    required_fields = ["name", "description", "target", "steps"]
 
-    name = lines[0] if lines else "unnamed-workflow"
-    description = lines[1] if len(lines) > 1 else "No description"
-    target = lines[2] if len(lines) > 2 else "No target"
+    for field in required_fields:
+        if field not in payload:
+            raise ValueError(f"Workflow missing required field: {field}")
+
+    steps = _parse_steps(payload["steps"])
 
     return WorkflowSpec(
-        name=name,
-        description=description,
-        target=target,
+        name=str(payload["name"]),
+        description=str(payload["description"]),
+        target=str(payload["target"]),
+        steps=steps,
+        options=_parse_options(payload.get("options")),
     )

@@ -10,6 +10,7 @@ def print_run_result(result):
     print(f"Workflow: {result.name}")
     print(f"Status: {result.status}")
     print(f"Target: {result.target}")
+    print(f"Steps: {result.enabled_steps}/{result.total_steps} enabled")
     print()
     print(result.message)
 
@@ -20,7 +21,7 @@ def main():
         description="Workflow Automation MVP",
     )
 
-    parser.add_argument("workflow", help="Path to workflow spec file")
+    parser.add_argument("workflow", help="Path to workflow JSON contract")
 
     args = parser.parse_args()
 
