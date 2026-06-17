@@ -6,10 +6,11 @@ def test_print_run_result(capsys):
     result = WorkflowRunResult(
         name="sample-document-workflow",
         status="ok",
-        message="Workflow contract loaded: sample-document-workflow",
+        message="Workflow contract loaded with task registry: sample-document-workflow",
         target="data/input_docs",
         total_steps=3,
         enabled_steps=2,
+        task_types=["detect", "pipeline"],
     )
 
     print_run_result(result)
@@ -21,3 +22,4 @@ def test_print_run_result(capsys):
     assert "ok" in captured.out
     assert "data/input_docs" in captured.out
     assert "Steps: 2/3 enabled" in captured.out
+    assert "Tasks: detect, pipeline" in captured.out

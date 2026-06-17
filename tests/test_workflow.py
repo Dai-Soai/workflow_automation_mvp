@@ -124,3 +124,28 @@ def test_run_workflow(tmp_path):
     assert result.total_steps == 3
     assert result.enabled_steps == 2
     assert "Workflow contract loaded" in result.message
+    assert result.task_types == ["detect", "pipeline"]
+
+
+def test_load_workflow_spec_rejects_unsupported_step_type(tmp_path):
+    workflow = tmp_path / "unsupported-step.workflow.json"
+    workflow.write_text(
+        """
+{
+  "name": "broken-workflow",
+  "description": "Unsupported step type",
+  "target": "data/input_docs",
+  "steps": [
+    {
+      "name": "unknown_step",
+      "type": "unknown",
+      "enabled": true
+    }
+  ]
+}
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="Unsupported workflow step type"):
+        load_workflow_spec(str(workflow))

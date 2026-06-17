@@ -11,6 +11,10 @@ def print_run_result(result):
     print(f"Status: {result.status}")
     print(f"Target: {result.target}")
     print(f"Steps: {result.enabled_steps}/{result.total_steps} enabled")
+
+    if result.task_types:
+        print(f"Tasks: {', '.join(result.task_types)}")
+
     print()
     print(result.message)
 

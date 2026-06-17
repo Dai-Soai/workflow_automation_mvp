@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from workflow_automation.registry import is_supported_task
+
 
 @dataclass
 class WorkflowStep:
@@ -44,10 +46,15 @@ def _parse_steps(raw_steps: list[dict[str, Any]]) -> list[WorkflowStep]:
         if "type" not in raw_step:
             raise ValueError("Workflow step missing required field: type")
 
+        task_type = str(raw_step["type"])
+
+        if not is_supported_task(task_type):
+            raise ValueError(f"Unsupported workflow step type: {task_type}")
+
         steps.append(
             WorkflowStep(
                 name=str(raw_step["name"]),
-                type=str(raw_step["type"]),
+                type=task_type,
                 enabled=bool(raw_step.get("enabled", True)),
             )
         )
