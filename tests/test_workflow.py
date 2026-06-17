@@ -123,8 +123,11 @@ def test_run_workflow(tmp_path):
     assert result.target == "data/input_docs"
     assert result.total_steps == 3
     assert result.enabled_steps == 2
-    assert "Workflow contract loaded" in result.message
     assert result.task_types == ["detect", "pipeline"]
+    assert len(result.step_results) == 2
+    assert result.step_results[0].step_name == "detect_documents"
+    assert result.step_results[0].status == "ok"
+    assert "Workflow executed locally" in result.message
 
 
 def test_load_workflow_spec_rejects_unsupported_step_type(tmp_path):

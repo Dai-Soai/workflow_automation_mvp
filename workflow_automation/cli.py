@@ -16,6 +16,18 @@ def print_run_result(result):
         print(f"Tasks: {', '.join(result.task_types)}")
 
     print()
+
+    if result.step_results:
+        print("Step Results:")
+        for step_result in result.step_results:
+            print(
+                f"- [{step_result.status}] "
+                f"{step_result.step_name} "
+                f"({step_result.task_type})"
+            )
+            print(f"  {step_result.message}")
+        print()
+
     print(result.message)
 
 
