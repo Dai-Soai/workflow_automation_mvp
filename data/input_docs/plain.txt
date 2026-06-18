@@ -1,0 +1,3 @@
+RADAR Workflow Plain Text
+
+This file is processed through the workflow automation layer.

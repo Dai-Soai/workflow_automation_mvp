@@ -20,7 +20,7 @@ def run_workflow(workflow_path: str) -> WorkflowRunResult:
     spec: WorkflowSpec = load_workflow_spec(workflow_path)
 
     enabled_steps = [step for step in spec.steps if step.enabled]
-    step_results = execute_steps(enabled_steps, spec.target)
+    step_results = execute_steps(enabled_steps, spec.target, spec.options)
     task_types = [result.task_type for result in step_results]
 
     return WorkflowRunResult(

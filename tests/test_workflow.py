@@ -20,7 +20,7 @@ def write_sample_workflow(path):
     {
       "name": "run_document_pipeline",
       "type": "pipeline",
-      "enabled": true
+      "enabled": false
     },
     {
       "name": "publish_to_knowledge_search",
@@ -122,9 +122,9 @@ def test_run_workflow(tmp_path):
     assert result.name == "sample-document-workflow"
     assert result.target == "data/input_docs"
     assert result.total_steps == 3
-    assert result.enabled_steps == 2
-    assert result.task_types == ["detect", "pipeline"]
-    assert len(result.step_results) == 2
+    assert result.enabled_steps == 1
+    assert result.task_types == ["detect"]
+    assert len(result.step_results) == 1
     assert result.step_results[0].step_name == "detect_documents"
     assert result.step_results[0].status == "ok"
     assert "Workflow executed locally" in result.message

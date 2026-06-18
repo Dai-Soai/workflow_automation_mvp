@@ -1,15 +1,21 @@
 from workflow_automation.executor import execute_step, execute_steps
-from workflow_automation.workflow import WorkflowStep
+from workflow_automation.workflow import WorkflowOptions, WorkflowStep
 
 
-def test_execute_step():
+def test_execute_step_placeholder():
     step = WorkflowStep(
         name="detect_documents",
         type="detect",
         enabled=True,
     )
 
-    result = execute_step(step, target="data/input_docs")
+    options = WorkflowOptions()
+
+    result = execute_step(
+        step,
+        target="data/input_docs",
+        options=options,
+    )
 
     assert result.status == "ok"
     assert result.step_name == "detect_documents"
@@ -32,7 +38,13 @@ def test_execute_steps_skips_disabled_steps():
         ),
     ]
 
-    results = execute_steps(steps, target="data/input_docs")
+    options = WorkflowOptions()
+
+    results = execute_steps(
+        steps,
+        target="data/input_docs",
+        options=options,
+    )
 
     assert len(results) == 1
     assert results[0].step_name == "detect_documents"
