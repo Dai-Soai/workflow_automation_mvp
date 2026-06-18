@@ -4,7 +4,13 @@ A lightweight workflow automation layer for orchestrating reusable RADAR utility
 
 ## Current Status
 
-M7 Knowledge Search Integration.
+M1 Bootstrap                    ✅
+M2 Workflow Contract            ✅
+M3 Task Registry                ✅
+M4 Local Workflow Runner        ✅
+M5 Document Pipeline Executor   ✅
+M6 CLI Layer Expansion          ✅
+M7 Knowledge Search Integration ✅
 
 ## Purpose
 
