@@ -17,6 +17,11 @@
       "name": "publish_to_knowledge_search",
       "type": "publish",
       "enabled": true
+    },
+    {
+      "name": "index_knowledge_search",
+      "type": "index",
+      "enabled": true
     }
   ],
   "options": {

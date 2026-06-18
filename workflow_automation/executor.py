@@ -1,8 +1,11 @@
 from dataclasses import dataclass
 
+from workflow_automation.knowledge_executor import index_documents
 from workflow_automation.pipeline_executor import run_document_pipeline
 from workflow_automation.registry import get_task_definition
 from workflow_automation.workflow import WorkflowOptions, WorkflowStep
+
+DEFAULT_PUBLISHED_DIR = "outputs/published_documents"
 
 
 @dataclass
@@ -41,6 +44,32 @@ def execute_pipeline_step(
     )
 
 
+def execute_index_step(step: WorkflowStep) -> StepExecutionResult:
+    result = index_documents(DEFAULT_PUBLISHED_DIR)
+
+    if result.status == "ok":
+        output = result.stdout.strip()
+
+        message = "Knowledge Search index completed."
+
+        if output:
+            message = f"{message} {output}"
+
+        return StepExecutionResult(
+            step_name=step.name,
+            task_type=step.type,
+            status="ok",
+            message=message,
+        )
+
+    return StepExecutionResult(
+        step_name=step.name,
+        task_type=step.type,
+        status="failed",
+        message=result.stderr or result.stdout or "Knowledge Search index failed.",
+    )
+
+
 def execute_step(
     step: WorkflowStep,
     target: str,
@@ -48,6 +77,9 @@ def execute_step(
 ) -> StepExecutionResult:
     if step.type == "pipeline":
         return execute_pipeline_step(step, target, options)
+
+    if step.type == "index":
+        return execute_index_step(step)
 
     task_definition = get_task_definition(step.type)
 

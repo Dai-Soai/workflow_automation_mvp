@@ -31,6 +31,19 @@ def print_run_result(result):
             print(f"  {step_result.message}")
         print()
 
+    if result.search_result is not None:
+        print("Knowledge Search:")
+        print(f"Query: {result.search_query}")
+        print(f"Status: {result.search_result.status}")
+
+        if result.search_result.stdout.strip():
+            print(result.search_result.stdout.strip())
+
+        if result.search_result.stderr.strip():
+            print(result.search_result.stderr.strip())
+
+        print()
+
     print(result.message)
 
 
@@ -71,6 +84,11 @@ def main():
         help="Load and validate workflow without executing steps",
     )
 
+    parser.add_argument(
+        "--search",
+        help="Run Knowledge Search query after workflow execution",
+    )
+
     args = parser.parse_args()
 
     result = run_workflow(
@@ -80,6 +98,7 @@ def main():
         export_markdown=True if args.export_markdown else None,
         publish=True if args.publish else None,
         dry_run=args.dry_run,
+        search_query=args.search,
     )
 
     print_run_result(result)

@@ -4,7 +4,7 @@ A lightweight workflow automation layer for orchestrating reusable RADAR utility
 
 ## Current Status
 
-M6 CLI Layer Expansion.
+M7 Knowledge Search Integration.
 
 ## Purpose
 
@@ -29,6 +29,14 @@ auto-run workflows/sample.workflow.json
 ```bash
 auto-run workflows/sample.workflow.json --dry-run
 ```
+### Run Workflow and Search
+
+```bash
+auto-run workflows/sample.workflow.json \
+  --publish \
+  --search "Workflow"
+```
+
 ## Features
 
 - CLI command: `auto-run`
@@ -57,7 +65,7 @@ auto-run workflows/sample.workflow.json --dry-run
 * [x] M4 Local Workflow Runner
 * [x] M5 Document Pipeline Executor
 * [x] M6 CLI Layer Expansion
-* [ ] M7 Knowledge Search Integration
+* [x] M7 Knowledge Search Integration
 * [ ] M8 Telegram Trigger
 * [ ] M9 Packaging & README
 * [ ] M10 v0.1.0 Release

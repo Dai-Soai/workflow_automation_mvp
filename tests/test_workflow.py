@@ -11,23 +11,29 @@ def write_sample_workflow(path):
   "name": "sample-document-workflow",
   "description": "Process a document folder through RADAR automation.",
   "target": "data/input_docs",
-  "steps": [
-    {
-      "name": "detect_documents",
-      "type": "detect",
-      "enabled": true
-    },
-    {
-      "name": "run_document_pipeline",
-      "type": "pipeline",
-      "enabled": false
-    },
-    {
-      "name": "publish_to_knowledge_search",
-      "type": "publish",
-      "enabled": false
-    }
-  ],
+    "steps": [
+      {
+        "name": "detect_documents",
+        "type": "detect",
+        "enabled": true
+      },
+      {
+        "name": "run_document_pipeline",
+        "type": "pipeline",
+        "enabled": false
+      },
+      {
+        "name": "publish_to_knowledge_search",
+        "type": "publish",
+        "enabled": false
+      },
+      {
+        "name": "index_knowledge_search",
+        "type": "index",
+        "enabled": false
+      }
+    ],
+
   "options": {
     "export_json": true,
     "export_markdown": true,
@@ -48,7 +54,7 @@ def test_load_workflow_spec(tmp_path):
     assert spec.name == "sample-document-workflow"
     assert spec.description == "Process a document folder through RADAR automation."
     assert spec.target == "data/input_docs"
-    assert len(spec.steps) == 3
+    assert len(spec.steps) == 4
     assert spec.steps[0].name == "detect_documents"
     assert spec.steps[0].type == "detect"
     assert spec.steps[0].enabled is True
@@ -121,7 +127,7 @@ def test_run_workflow(tmp_path):
     assert result.status == "ok"
     assert result.name == "sample-document-workflow"
     assert result.target == "data/input_docs"
-    assert result.total_steps == 3
+    assert result.total_steps == 4
     assert result.enabled_steps == 1
     assert result.task_types == ["detect"]
     assert len(result.step_results) == 1

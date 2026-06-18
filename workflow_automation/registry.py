@@ -24,6 +24,11 @@ DEFAULT_TASKS = {
         name="Publish to Knowledge Search",
         description="Publish processed output to Knowledge Search input.",
     ),
+    "index": TaskDefinition(
+        task_type="index",
+        name="Index Knowledge Search",
+        description="Index published documents into Knowledge Search.",
+    ),
 }
 
 

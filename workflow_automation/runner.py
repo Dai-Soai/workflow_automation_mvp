@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
 from workflow_automation.executor import StepExecutionResult, execute_steps
+from workflow_automation.knowledge_executor import (
+    KnowledgeSearchResult,
+    search_documents,
+)
 from workflow_automation.workflow import (
     WorkflowSpec,
     load_workflow_spec,
@@ -19,6 +23,8 @@ class WorkflowRunResult:
     task_types: list[str]
     step_results: list[StepExecutionResult]
     dry_run: bool = False
+    search_query: str | None = None
+    search_result: KnowledgeSearchResult | None = None
 
 
 def run_workflow(
@@ -28,6 +34,7 @@ def run_workflow(
     export_markdown: bool | None = None,
     publish: bool | None = None,
     dry_run: bool = False,
+    search_query: str | None = None,
 ) -> WorkflowRunResult:
     spec: WorkflowSpec = load_workflow_spec(workflow_path)
 
@@ -54,14 +61,23 @@ def run_workflow(
             task_types=task_types,
             step_results=[],
             dry_run=True,
+            search_query=search_query,
         )
 
     step_results = execute_steps(enabled_steps, spec.target, spec.options)
     task_types = [result.task_type for result in step_results]
 
+    search_result = None
+
+    if search_query:
+        search_result = search_documents(search_query)
+
     overall_status = "ok"
 
     if any(result.status == "failed" for result in step_results):
+        overall_status = "failed"
+
+    if search_result and search_result.status == "failed":
         overall_status = "failed"
 
     return WorkflowRunResult(
@@ -73,4 +89,6 @@ def run_workflow(
         enabled_steps=len(enabled_steps),
         task_types=task_types,
         step_results=step_results,
+        search_query=search_query,
+        search_result=search_result,
     )

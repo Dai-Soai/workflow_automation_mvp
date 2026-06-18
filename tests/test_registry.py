@@ -14,6 +14,7 @@ def test_get_task_registry():
     assert "detect" in registry
     assert "pipeline" in registry
     assert "publish" in registry
+    assert "index" in registry
 
 
 def test_is_supported_task():
@@ -21,6 +22,7 @@ def test_is_supported_task():
     assert is_supported_task("pipeline") is True
     assert is_supported_task("publish") is True
     assert is_supported_task("unknown") is False
+    assert is_supported_task("index") is True
 
 
 def test_get_task_definition():
@@ -38,4 +40,4 @@ def test_get_task_definition_rejects_unknown_task():
 def test_list_task_types():
     task_types = list_task_types()
 
-    assert task_types == ["detect", "pipeline", "publish"]
+    assert task_types == ["detect", "index", "pipeline", "publish"]
