@@ -4,7 +4,7 @@ A lightweight workflow automation layer for orchestrating reusable RADAR utility
 
 ## Current Status
 
-M5 Document Pipeline Executor.
+M6 CLI Layer Expansion.
 
 ## Purpose
 
@@ -24,7 +24,11 @@ It is designed to coordinate:
 ```bash
 auto-run workflows/sample.workflow.json
 ```
+### Dry Run
 
+```bash
+auto-run workflows/sample.workflow.json --dry-run
+```
 ## Features
 
 - CLI command: `auto-run`
@@ -39,6 +43,11 @@ auto-run workflows/sample.workflow.json
 - Executes `doc-pipe --batch` from workflow steps
 - Workflow JSON/Markdown export options
 - Workflow publish option
+- CLI target override
+- CLI export JSON override
+- CLI export Markdown override
+- CLI publish override
+- Dry-run workflow validation
 
 ## Roadmap
 
@@ -47,7 +56,7 @@ auto-run workflows/sample.workflow.json
 * [x] M3 Task Registry
 * [x] M4 Local Workflow Runner
 * [x] M5 Document Pipeline Executor
-* [ ] M6 CLI Layer Expansion
+* [x] M6 CLI Layer Expansion
 * [ ] M7 Knowledge Search Integration
 * [ ] M8 Telegram Trigger
 * [ ] M9 Packaging & README

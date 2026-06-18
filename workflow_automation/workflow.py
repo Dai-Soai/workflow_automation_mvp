@@ -95,3 +95,27 @@ def load_workflow_spec(workflow_path: str) -> WorkflowSpec:
         steps=steps,
         options=_parse_options(payload.get("options")),
     )
+
+
+def override_workflow_spec(
+    spec: WorkflowSpec,
+    target: str | None = None,
+    export_json: bool | None = None,
+    export_markdown: bool | None = None,
+    publish: bool | None = None,
+) -> WorkflowSpec:
+    options = WorkflowOptions(
+        export_json=spec.options.export_json if export_json is None else export_json,
+        export_markdown=(
+            spec.options.export_markdown if export_markdown is None else export_markdown
+        ),
+        publish=spec.options.publish if publish is None else publish,
+    )
+
+    return WorkflowSpec(
+        name=spec.name,
+        description=spec.description,
+        target=spec.target if target is None else target,
+        steps=spec.steps,
+        options=options,
+    )

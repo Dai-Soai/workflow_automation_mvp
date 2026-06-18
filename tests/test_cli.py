@@ -23,7 +23,7 @@ def test_print_run_result(capsys):
                 step_name="run_document_pipeline",
                 task_type="pipeline",
                 status="ok",
-                message="Executed Run Document Pipeline for target: data/input_docs",
+                message="Document pipeline executed successfully.",
             ),
         ],
     )
@@ -41,3 +41,25 @@ def test_print_run_result(capsys):
     assert "Step Results:" in captured.out
     assert "detect_documents" in captured.out
     assert "run_document_pipeline" in captured.out
+
+
+def test_print_dry_run_result(capsys):
+    result = WorkflowRunResult(
+        name="sample-document-workflow",
+        status="ok",
+        message="Workflow dry run completed: sample-document-workflow",
+        target="data/input_docs",
+        total_steps=3,
+        enabled_steps=3,
+        task_types=["detect", "pipeline", "publish"],
+        step_results=[],
+        dry_run=True,
+    )
+
+    print_run_result(result)
+
+    captured = capsys.readouterr()
+
+    assert "WORKFLOW AUTOMATION MVP" in captured.out
+    assert "Mode: dry-run" in captured.out
+    assert "Workflow dry run completed" in captured.out

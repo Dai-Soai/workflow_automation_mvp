@@ -15,6 +15,9 @@ def print_run_result(result):
     if result.task_types:
         print(f"Tasks: {', '.join(result.task_types)}")
 
+    if result.dry_run:
+        print("Mode: dry-run")
+
     print()
 
     if result.step_results:
@@ -39,9 +42,45 @@ def main():
 
     parser.add_argument("workflow", help="Path to workflow JSON contract")
 
+    parser.add_argument(
+        "--target",
+        help="Override workflow target directory",
+    )
+
+    parser.add_argument(
+        "--export-json",
+        action="store_true",
+        help="Override workflow option: export JSON reports",
+    )
+
+    parser.add_argument(
+        "--export-markdown",
+        action="store_true",
+        help="Override workflow option: export Markdown reports",
+    )
+
+    parser.add_argument(
+        "--publish",
+        action="store_true",
+        help="Override workflow option: publish processed documents",
+    )
+
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Load and validate workflow without executing steps",
+    )
+
     args = parser.parse_args()
 
-    result = run_workflow(args.workflow)
+    result = run_workflow(
+        args.workflow,
+        target=args.target,
+        export_json=True if args.export_json else None,
+        export_markdown=True if args.export_markdown else None,
+        publish=True if args.publish else None,
+        dry_run=args.dry_run,
+    )
 
     print_run_result(result)
 

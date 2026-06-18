@@ -1,7 +1,7 @@
 import pytest
 
 from workflow_automation.runner import run_workflow
-from workflow_automation.workflow import load_workflow_spec
+from workflow_automation.workflow import load_workflow_spec, override_workflow_spec
 
 
 def write_sample_workflow(path):
@@ -152,3 +152,37 @@ def test_load_workflow_spec_rejects_unsupported_step_type(tmp_path):
 
     with pytest.raises(ValueError, match="Unsupported workflow step type"):
         load_workflow_spec(str(workflow))
+
+
+def test_override_workflow_spec(tmp_path):
+    workflow = tmp_path / "sample.workflow.json"
+    write_sample_workflow(workflow)
+
+    spec = load_workflow_spec(str(workflow))
+
+    overridden = override_workflow_spec(
+        spec,
+        target="data/custom_docs",
+        export_json=True,
+        export_markdown=True,
+        publish=True,
+    )
+
+    assert overridden.target == "data/custom_docs"
+    assert overridden.options.export_json is True
+    assert overridden.options.export_markdown is True
+    assert overridden.options.publish is True
+    assert overridden.name == spec.name
+    assert overridden.steps == spec.steps
+
+
+def test_run_workflow_dry_run(tmp_path):
+    workflow = tmp_path / "sample.workflow.json"
+    write_sample_workflow(workflow)
+
+    result = run_workflow(str(workflow), dry_run=True)
+
+    assert result.status == "ok"
+    assert result.dry_run is True
+    assert result.step_results == []
+    assert "Workflow dry run completed" in result.message
