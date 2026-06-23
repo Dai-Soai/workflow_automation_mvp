@@ -11,6 +11,7 @@ M4 Local Workflow Runner        ✅
 M5 Document Pipeline Executor   ✅
 M6 CLI Layer Expansion          ✅
 M7 Knowledge Search Integration ✅
+M8A Telegram Contract ✅
 
 ## Purpose
 
@@ -72,7 +73,9 @@ auto-run workflows/sample.workflow.json \
 * [x] M5 Document Pipeline Executor
 * [x] M6 CLI Layer Expansion
 * [x] M7 Knowledge Search Integration
-* [ ] M8 Telegram Trigger
+- [x] M8 Telegram Trigger
+- [ ] M8B Mock Telegram Command
+- [ ] M8C Telegram Response Integration
 * [ ] M9 Packaging & README
 * [ ] M10 v0.1.0 Release
 
