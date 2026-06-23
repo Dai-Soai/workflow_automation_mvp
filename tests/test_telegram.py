@@ -1,7 +1,9 @@
 import pytest
 
+from workflow_automation.knowledge_executor import KnowledgeSearchResult
 from workflow_automation.runner import WorkflowRunResult
 from workflow_automation.telegram import (
+    format_compact_workflow_response,
     format_workflow_help,
     format_workflow_response,
     format_workflow_status,
@@ -142,3 +144,64 @@ def test_handle_mock_telegram_command_run_dry_run():
     assert "WORKFLOW AUTOMATION" in response
     assert "Mode: dry-run" in response
     assert "Workflow dry run completed" in response
+
+
+def test_format_compact_workflow_response_basic():
+    result = WorkflowRunResult(
+        name="sample-document-workflow",
+        status="ok",
+        message="Workflow executed locally: sample-document-workflow",
+        target="data/input_docs",
+        total_steps=4,
+        enabled_steps=4,
+        task_types=["detect", "pipeline", "publish", "index"],
+        step_results=[],
+    )
+
+    response = format_compact_workflow_response(result)
+
+    assert "✅ Workflow completed" in response
+    assert "Workflow: sample-document-workflow" in response
+    assert "Status: ok" in response
+    assert "Steps: 4/4" in response
+    assert "Tasks: detect, pipeline, publish, index" in response
+
+
+def test_handle_mock_telegram_command_compact_dry_run():
+    response = handle_mock_telegram_command(
+        "/run workflows/sample.workflow.json --dry-run",
+        compact=True,
+    )
+
+    assert "✅ Workflow completed" in response
+    assert "Mode: dry-run" in response
+    assert "Workflow dry run completed" in response
+
+
+def test_format_compact_workflow_response_with_search_result():
+    search_result = KnowledgeSearchResult(
+        status="ok",
+        command=["radar-search", "search", "Workflow"],
+        stdout="Found 3 result(s)\n\n/path/to/doc.txt\nRADAR Workflow",
+        stderr="",
+        returncode=0,
+    )
+
+    result = WorkflowRunResult(
+        name="sample-document-workflow",
+        status="ok",
+        message="Workflow executed locally: sample-document-workflow",
+        target="data/input_docs",
+        total_steps=4,
+        enabled_steps=4,
+        task_types=["detect", "pipeline", "publish", "index"],
+        step_results=[],
+        search_query="Workflow",
+        search_result=search_result,
+    )
+
+    response = format_compact_workflow_response(result)
+
+    assert "Knowledge Search:" in response
+    assert "Query: Workflow" in response
+    assert "Found 3 result(s)" in response

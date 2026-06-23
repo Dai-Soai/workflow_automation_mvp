@@ -12,6 +12,7 @@ M5 Document Pipeline Executor   ✅
 M6 CLI Layer Expansion          ✅
 M7 Knowledge Search Integration ✅
 M8A Telegram Contract ✅
+M8C Telegram Response Integration ✅
 
 ## Purpose
 
@@ -65,6 +66,20 @@ print(
 )
 PY
 ```
+### Compact Telegram Response
+
+```bash
+python - <<'PY'
+from workflow_automation.telegram import handle_mock_telegram_command
+
+print(
+    handle_mock_telegram_command(
+        "/run workflows/sample.workflow.json --dry-run",
+        compact=True,
+    )
+)
+PY
+```
 
 ## Features
 
@@ -92,6 +107,10 @@ PY
 - `/workflow help` command
 - `/workflow status` command
 - `/run` command routing
+- Compact Telegram workflow response
+- Status icons for chat output
+- Search result summary formatting
+- Compact mode for mock Telegram command handler
 
 ## Roadmap
 
@@ -104,7 +123,7 @@ PY
 * [x] M7 Knowledge Search Integration
 - [x] M8 Telegram Trigger
 - [x] M8B Mock Telegram Command
-- [ ] M8C Telegram Response Integration
+- [x] M8C Telegram Response Integration
 * [ ] M9 Packaging & README
 * [ ] M10 v0.1.0 Release
 

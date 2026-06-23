@@ -132,8 +132,74 @@ def format_workflow_response(result: WorkflowRunResult) -> str:
     return "\n".join(lines)
 
 
+def _status_icon(status: str) -> str:
+    if status == "ok":
+        return "✅"
+
+    if status == "failed":
+        return "❌"
+
+    return "ℹ️"
+
+
+def _extract_search_result_count(stdout: str) -> str | None:
+    for line in stdout.splitlines():
+        stripped = line.strip()
+
+        if stripped.startswith("Found ") and " result" in stripped:
+            return stripped
+
+    return None
+
+
+def format_compact_workflow_response(result: WorkflowRunResult) -> str:
+    icon = _status_icon(result.status)
+
+    lines = [
+        f"{icon} Workflow completed",
+        "",
+        f"Workflow: {result.name}",
+        f"Status: {result.status}",
+        f"Target: {result.target}",
+        f"Steps: {result.enabled_steps}/{result.total_steps}",
+    ]
+
+    if result.task_types:
+        lines.append(f"Tasks: {', '.join(result.task_types)}")
+
+    if result.dry_run:
+        lines.append("Mode: dry-run")
+
+    if result.step_results:
+        lines.append("")
+        lines.append("Results:")
+
+        for step_result in result.step_results:
+            step_icon = _status_icon(step_result.status)
+            lines.append(
+                f"{step_icon} {step_result.step_name} ({step_result.task_type})"
+            )
+
+    if result.search_result is not None:
+        lines.append("")
+        lines.append("Knowledge Search:")
+        lines.append(f"Query: {result.search_query}")
+        lines.append(f"Status: {result.search_result.status}")
+
+        count_line = _extract_search_result_count(result.search_result.stdout)
+
+        if count_line:
+            lines.append(count_line)
+
+    lines.append("")
+    lines.append(result.message)
+
+    return "\n".join(lines)
+
+
 def handle_workflow_request(
     request: TelegramWorkflowRequest,
+    compact: bool = False,
 ) -> str:
     result = run_workflow(
         request.workflow,
@@ -145,13 +211,16 @@ def handle_workflow_request(
         search_query=request.search,
     )
 
+    if compact:
+        return format_compact_workflow_response(result)
+
     return format_workflow_response(result)
 
 
-def handle_telegram_command(command: str) -> str:
+def handle_telegram_command(command: str, compact: bool = False) -> str:
     request = parse_telegram_command(command)
 
-    return handle_workflow_request(request)
+    return handle_workflow_request(request, compact=compact)
 
 
 def format_workflow_help() -> str:
@@ -192,7 +261,7 @@ def format_workflow_status() -> str:
     )
 
 
-def handle_mock_telegram_command(command: str) -> str:
+def handle_mock_telegram_command(command: str, compact: bool = False) -> str:
     normalized = command.strip()
 
     if not normalized:
@@ -205,6 +274,6 @@ def handle_mock_telegram_command(command: str) -> str:
         return format_workflow_status()
 
     if normalized.startswith("/run"):
-        return handle_telegram_command(normalized)
+        return handle_telegram_command(normalized, compact=compact)
 
     raise ValueError(f"Unsupported Telegram command: {normalized}")
