@@ -2,8 +2,10 @@ import pytest
 
 from workflow_automation.runner import WorkflowRunResult
 from workflow_automation.telegram import (
-    TelegramWorkflowRequest,
+    format_workflow_help,
     format_workflow_response,
+    format_workflow_status,
+    handle_mock_telegram_command,
     parse_telegram_command,
 )
 
@@ -89,3 +91,54 @@ def test_format_workflow_response_basic():
     assert "Target: data/input_docs" in response
     assert "Steps: 4/4 enabled" in response
     assert "Mode: dry-run" in response
+
+
+def test_format_workflow_help():
+    response = format_workflow_help()
+
+    assert "WORKFLOW AUTOMATION HELP" in response
+    assert "/workflow help" in response
+    assert "/workflow status" in response
+    assert "/run <workflow_path>" in response
+
+
+def test_format_workflow_status():
+    response = format_workflow_status()
+
+    assert "WORKFLOW AUTOMATION STATUS" in response
+    assert "Status: ok" in response
+    assert "mock-telegram-command" in response
+
+
+def test_handle_mock_telegram_command_help():
+    response = handle_mock_telegram_command("/workflow help")
+
+    assert "WORKFLOW AUTOMATION HELP" in response
+    assert "/run <workflow_path>" in response
+
+
+def test_handle_mock_telegram_command_status():
+    response = handle_mock_telegram_command("/workflow status")
+
+    assert "WORKFLOW AUTOMATION STATUS" in response
+    assert "Workflow engine: available" in response
+
+
+def test_handle_mock_telegram_command_rejects_empty_command():
+    with pytest.raises(ValueError, match="Empty Telegram command"):
+        handle_mock_telegram_command("")
+
+
+def test_handle_mock_telegram_command_rejects_unknown_command():
+    with pytest.raises(ValueError, match="Unsupported Telegram command"):
+        handle_mock_telegram_command("/unknown")
+
+
+def test_handle_mock_telegram_command_run_dry_run():
+    response = handle_mock_telegram_command(
+        "/run workflows/sample.workflow.json --dry-run"
+    )
+
+    assert "WORKFLOW AUTOMATION" in response
+    assert "Mode: dry-run" in response
+    assert "Workflow dry run completed" in response

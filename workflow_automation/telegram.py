@@ -152,3 +152,59 @@ def handle_telegram_command(command: str) -> str:
     request = parse_telegram_command(command)
 
     return handle_workflow_request(request)
+
+
+def format_workflow_help() -> str:
+    return "\n".join(
+        [
+            "WORKFLOW AUTOMATION HELP",
+            "",
+            "Commands:",
+            "",
+            "/workflow help",
+            "Show available workflow commands.",
+            "",
+            "/workflow status",
+            "Show workflow automation status.",
+            "",
+            "/run <workflow_path>",
+            "Run a workflow contract.",
+            "",
+            "Examples:",
+            "",
+            "/run workflows/sample.workflow.json --dry-run",
+            "/run workflows/sample.workflow.json --publish --search Workflow",
+            "/run workflows/sample.workflow.json --target data/custom_docs --export-json --export-markdown --publish",
+        ]
+    )
+
+
+def format_workflow_status() -> str:
+    return "\n".join(
+        [
+            "WORKFLOW AUTOMATION STATUS",
+            "",
+            "Status: ok",
+            "Mode: mock-telegram-command",
+            "Supported commands: /workflow help, /workflow status, /run",
+            "Workflow engine: available",
+        ]
+    )
+
+
+def handle_mock_telegram_command(command: str) -> str:
+    normalized = command.strip()
+
+    if not normalized:
+        raise ValueError("Empty Telegram command")
+
+    if normalized == "/workflow help":
+        return format_workflow_help()
+
+    if normalized == "/workflow status":
+        return format_workflow_status()
+
+    if normalized.startswith("/run"):
+        return handle_telegram_command(normalized)
+
+    raise ValueError(f"Unsupported Telegram command: {normalized}")

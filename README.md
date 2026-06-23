@@ -44,6 +44,28 @@ auto-run workflows/sample.workflow.json \
   --search "Workflow"
 ```
 
+### Mock Telegram Commands
+
+```bash
+python - <<'PY'
+from workflow_automation.telegram import handle_mock_telegram_command
+
+print(handle_mock_telegram_command("/workflow help"))
+PY
+```
+
+```bash
+python - <<'PY'
+from workflow_automation.telegram import handle_mock_telegram_command
+
+print(
+    handle_mock_telegram_command(
+        "/run workflows/sample.workflow.json --dry-run"
+    )
+)
+PY
+```
+
 ## Features
 
 - CLI command: `auto-run`
@@ -63,6 +85,13 @@ auto-run workflows/sample.workflow.json \
 - CLI export Markdown override
 - CLI publish override
 - Dry-run workflow validation
+- Telegram workflow request contract
+- Telegram-style `/run` command parser
+- Workflow response formatter for chat interfaces
+- Mock Telegram command router
+- `/workflow help` command
+- `/workflow status` command
+- `/run` command routing
 
 ## Roadmap
 
@@ -74,7 +103,7 @@ auto-run workflows/sample.workflow.json \
 * [x] M6 CLI Layer Expansion
 * [x] M7 Knowledge Search Integration
 - [x] M8 Telegram Trigger
-- [ ] M8B Mock Telegram Command
+- [x] M8B Mock Telegram Command
 - [ ] M8C Telegram Response Integration
 * [ ] M9 Packaging & README
 * [ ] M10 v0.1.0 Release
