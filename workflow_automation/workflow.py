@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from workflow_automation.registry import is_supported_task
 
@@ -31,7 +31,7 @@ class WorkflowSpec:
 
 def _load_json(path: Path) -> dict[str, Any]:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
     except json.JSONDecodeError as exc:
         raise ValueError(f"Invalid workflow JSON: {path}") from exc
 

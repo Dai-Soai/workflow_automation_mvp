@@ -1,9 +1,10 @@
+from typing import Any
 import argparse
 
 from workflow_automation.runner import run_workflow
 
 
-def print_run_result(result):
+def print_run_result(result: Any) -> None:
     print("=" * 60)
     print("WORKFLOW AUTOMATION MVP")
     print("=" * 60)
@@ -47,7 +48,7 @@ def print_run_result(result):
     print(result.message)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         prog="auto-run",
         description="Workflow Automation MVP",
